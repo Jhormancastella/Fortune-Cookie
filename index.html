@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galleta de la Fortuna</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #8B0000;
+            --gold: #FFD700;
+            --cream: #FFEBCD;
+            --dark-red: #5A0000;
+            --light-gold: #FFF9C4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-red) 0%, #B22222 50%, var(--primary-red) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--gold);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Patrón de fondo chino */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 20%);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding-top: 20px;
+        }
+        
+        /* Selector de idioma */
+        .language-selector {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .lang-toggle {
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .lang-toggle:hover {
+            background: var(--primary-red);
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .lang-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 5px;
+            margin-top: 5px;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            min-width: 80px;
+        }
+
+        .lang-menu.show {
+            display: flex;
+        }
+
+        .lang-btn {
+            background: transparent;
+            color: var(--gold);
+            border: none;
+            border-radius: 5px;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-align: right;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .lang-btn:hover,
+        .lang-btn.active {
+            background: rgba(255, 215, 0, 0.2);
+        }
+        
+        /* Decoración superior */
+        .header-decoration {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .dragon {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin: 0 10px;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+            text-shadow: 3px 3px 0 var(--primary-red), 5px 5px 0 rgba(0, 0, 0, 0.2);
+            letter-spacing: 3px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        h1::before, h1::after {
+            content: "❖";
+            color: var(--gold);
+            margin: 0 15px;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: var(--cream);
+            text-shadow: 1px 1px 2px var(--primary-red);
+            font-style: italic;
+        }
+        
+        .fortune-cookie-container {
+            position: relative;
+            margin: 0 auto 40px;
+            width: 320px;
+            height: 320px;
+            perspective: 1000px;
+        }
+        
+        .fortune-cookie {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+        }
+        
+        .fortune-cookie:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        
+        .cookie {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            backface-visibility: hidden;
+            transition: all 0.8s ease;
+        }
+        
+        .cookie-intact {
+            background-image: url('https://res.cloudinary.com/dipv76dpn/image/upload/v1759626950/undefined_Quiero_una_versi%C3%B3n_d_b3r2sc.png');
+            opacity: 1;
+            transform: rotateY(0deg);
+        }
+        
+        .cookie-broken {
+            background-image: url('https://res.cloudinary.com/dipv76dpn/image/upload/v1759626950/undefined_Galleta_de_la_fortun_pqfrtx.png');
+            opacity: 0;
+            transform: rotateY(180deg);
+        }
+        
+        .fortune-message-container {
+            position: relative;
+            margin: 30px auto;
+            max-width: 600px;
+        }
+        
+        .scroll-background {
+            background: linear-gradient(to bottom, #FFF9E6, #FFF0C9);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Patrón de pergamino chino */
+        .scroll-background::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, transparent 95%, rgba(139, 0, 0, 0.1) 100%),
+                linear-gradient(0deg, transparent 95%, rgba(139, 0, 0, 0.1) 100%);
+            background-size: 30px 30px;
+            z-index: 0;
+        }
+        
+        .fortune-message {
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+            transition: all 0.8s ease 0.3s;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .fortune-message.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .fortune-text {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 25px;
+            color: var(--dark-red);
+            line-height: 1.6;
+            font-weight: 500;
+            text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fortune-type {
+            font-size: 1.1rem;
+            color: var(--dark-red);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            background: var(--light-gold);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--gold);
+        }
+        
+        .lucky-numbers-list {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 15px;
+            color: var(--dark-red);
+            letter-spacing: 2px;
+            background: rgba(255, 249, 196, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px dashed var(--gold);
+        }
+        
+        .lucky-numbers-list strong {
+            color: var(--primary-red);
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .reset-btn {
+            background: linear-gradient(to bottom, var(--gold), #DAA520);
+            color: var(--primary-red);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .reset-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .reset-btn:hover::before {
+            left: 100%;
+        }
+        
+        .instructions {
+            margin-top: 40px;
+            font-size: 1rem;
+            color: var(--cream);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px var(--primary-red);
+        }
+        
+        .copyright {
+            margin-top: 50px;
+            padding: 15px;
+            color: var(--cream);
+            font-size: 0.9rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            width: 100%;
+        }
+        
+        .lanterns {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 0;
+        }
+        
+        .lantern {
+            width: 35px;
+            height: 55px;
+            background: var(--primary-red);
+            border-radius: 20px;
+            position: relative;
+            animation: swing 5s ease-in-out infinite;
+        }
+        
+        .lantern::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            left: 8px;
+            width: 18px;
+            height: 18px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+        
+        .lantern::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 13px;
+            width: 8px;
+            height: 12px;
+            background: var(--gold);
+        }
+        
+        .lantern:nth-child(2) {
+            animation-delay: 1s;
+        }
+        
+        .lantern:nth-child(3) {
+            animation-delay: 2s;
+        }
+        
+        @keyframes swing {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .fortune-cookie-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .fortune-text {
+                font-size: 1.2rem;
+            }
+            
+            .dragon {
+                font-size: 1.4rem;
+            }
+            
+            .language-selector {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .lang-toggle {
+                padding: 6px 8px;
+                font-size: 0.75rem;
+            }
+            
+            .lang-menu {
+                right: -10px;
+            }
+            
+            .header-decoration {
+                margin-top: 40px;
+            }
+            
+            .lanterns {
+                display: none;
+            }
+            
+            .scroll-background {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lanterns">
+        <div class="lantern"></div>
+        <div class="lantern"></div>
+        <div class="lantern"></div>
+    </div>
+    
+    <div class="container">
+        <div class="language-selector">
+            <button class="lang-toggle" id="langToggle" aria-label="Cambiar idioma">
+                <span class="current-lang">🇪🇸 ES</span> <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="lang-menu" id="langMenu">
+                <button class="lang-btn active" data-lang="es">🇪🇸 ES</button>
+                <button class="lang-btn" data-lang="en">🇺🇸 EN</button>
+                <button class="lang-btn" data-lang="zh">🇨🇳 中文</button>
+            </div>
+        </div>
+
+        <div class="header-decoration">
+            <div class="dragon">🐉</div>
+            <h1 id="page-title">Galleta de la Fortuna</h1>
+            <div class="dragon">🐲</div>
+        </div>
+        
+        <p class="subtitle" id="page-subtitle">Toca la galleta para descubrir tu destino</p>
+        
+        <div class="fortune-cookie-container">
+            <div class="fortune-cookie" id="fortuneCookie">
+                <div class="cookie cookie-intact" id="cookieIntact"></div>
+                <div class="cookie cookie-broken" id="cookieBroken"></div>
+            </div>
+        </div>
+        
+        <div class="fortune-message-container">
+            <div class="scroll-background">
+                <div class="fortune-message" id="fortuneMessage">
+                    <p class="fortune-type" id="fortuneType"></p>
+                    <p class="fortune-text" id="fortuneText"></p>
+                    <div class="lucky-numbers-list" id="luckyNumbers"></div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">
+            <i class="fas fa-redo-alt"></i> Otra galleta
+        </button>
+        
+        <p class="instructions" id="page-instructions">
+            La galleta de la fortuna es una tradición en restaurantes chinos. Contiene un mensaje de sabiduría, predicción o consejo.
+        </p>
+        
+        <div class="copyright">
+            &copy; 2025 Todos los derechos reservados - Jhorman Jesús Castellanos Morales
+        </div>
+    </div>
+
+    <script>
+        // Traducciones de la interfaz
+        const translations = {
+            es: {
+                title: "Galleta de la Fortuna",
+                subtitle: "Toca la galleta para descubrir tu destino",
+                instructions: "La galleta de la fortuna es una tradición en restaurantes chinos. Contiene un mensaje de sabiduría, predicción o consejo.",
+                resetBtn: "Otra galleta",
+                category: {
+                    predictions: "Predicción",
+                    advice: "Consejo",
+                    inspiration: "Inspiración",
+                    luckyNumbers: "Números de la Suerte",
+                    jokes: "Broma"
+                },
+                luckyNumbersLabel: "Tus números de la suerte son:"
+            },
+            en: {
+                title: "Fortune Cookie",
+                subtitle: "Touch the cookie to discover your fate",
+                instructions: "The fortune cookie is a tradition in Chinese restaurants. It contains a message of wisdom, prediction, or advice.",
+                resetBtn: "Another cookie",
+                category: {
+                    predictions: "Prediction",
+                    advice: "Advice",
+                    inspiration: "Inspiration",
+                    luckyNumbers: "Lucky Numbers",
+                    jokes: "Joke"
+                },
+                luckyNumbersLabel: "Your lucky numbers are:"
+            },
+            zh: {
+                title: "幸运饼干",
+                subtitle: "触摸饼干，发现你的命运",
+                instructions: "幸运饼干是中国餐馆的传统。里面包含着智慧、预测或建议的信息。",
+                resetBtn: "另一个饼干",
+                category: {
+                    predictions: "预言",
+                    advice: "建议",
+                    inspiration: "激励",
+                    luckyNumbers: "幸运数字",
+                    jokes: "笑话"
+                },
+                luckyNumbersLabel: "你的幸运数字是："
+            }
+        };
+
+        // Mensajes de la fortuna traducidos por idioma
+        const fortuneMessages = {
+            es: {
+                predictions: [
+                    "Uno de tus sueños se hará realidad muy pronto.",
+                    "Serás feliz durante el resto de tu vida.",
+                    "Recibirás una noticia que cambiará tu destino.",
+                    "Encontrarás el amor en un lugar inesperado.",
+                    "Un viaje inesperado te traerá grandes alegrías.",
+                    "Tu situación económica mejorará significativamente.",
+                    "Conocerás a alguien que cambiará tu perspectiva de vida.",
+                    "Tendrás éxito en un proyecto importante.",
+                    "Recibirás un reconocimiento por tu trabajo.",
+                    "Encontrarás algo que habías perdido hace tiempo.",
+                    "Tendrás un encuentro fortuito con un viejo amigo.",
+                    "Un deseo secreto se hará realidad.",
+                    "Tu salud mejorará notablemente.",
+                    "Descubrirás un talento que no sabías que tenías.",
+                    "Una oportunidad única se presentará en tu camino.",
+                    "Resolverás un problema que te ha preocupado.",
+                    "Alguien te dará una sorpresa agradable.",
+                    "Tu paciencia será recompensada.",
+                    "Encontrarás la respuesta que estabas buscando.",
+                    "Tendrás un momento de claridad que guiará tus decisiones.",
+                    "Una persona influyente notará tus habilidades.",
+                    "Tu perseverancia dará frutos más pronto de lo esperado.",
+                    "Recibirás una oferta que no podrás rechazar.",
+                    "Un cambio positivo llegará a tu vida familiar.",
+                    "Tus esfuerzos serán reconocidos públicamente."
+                ],
+                advice: [
+                    "Ten paciencia, la gran muralla no se construyó en un día.",
+                    "No podemos dirigir el viento pero sí ajustar las velas.",
+                    "Escucha más de lo que hablas.",
+                    "Aprende del pasado, vive el presente, planea el futuro.",
+                    "No temas cometer errores, teme no aprender de ellos.",
+                    "La mejor manera de predecir el futuro es creándolo.",
+                    "Invierte en tu conocimiento, te dará los mejores intereses.",
+                    "Cuida tus palabras, una vez dichas no pueden retirarse.",
+                    "A veces el silencio es la mejor respuesta.",
+                    "No juzgues cada día por la cosecha que recoges, sino por las semillas que plantas.",
+                    "La paciencia amarga, pero sus frutos son dulces.",
+                    "El que mucho abarca, poco aprieta.",
+                    "No dejes para mañana lo que puedes hacer hoy.",
+                    "Más vale prevenir que lamentar.",
+                    "Quien no arriesga, no gana.",
+                    "La práctica hace al maestro.",
+                    "No hay atajos para ningún lugar que valga la pena.",
+                    "La humildad abre más puertas que la arrogancia.",
+                    "Agradece lo que tienes mientras persigues lo que quieres.",
+                    "El conocimiento es el único tesoro que aumenta al compartirlo.",
+                    "La honestidad es el primer capítulo del libro de la sabiduría.",
+                    "Cuida tu salud, es la verdadera riqueza.",
+                    "Aprecia las pequeñas cosas, un día verás que eran las grandes.",
+                    "El respeto se gana, la honestidad se aprecia, la confianza se adquiere.",
+                    "Incluso el viaje más largo comienza con un solo paso."
+                ],
+                inspiration: [
+                    "Anímate a descubrir cosas nuevas.",
+                    "El fracaso no es una derrota hasta que se deja de intentar.",
+                    "Cada día es una nueva oportunidad para cambiar tu vida.",
+                    "Eres más fuerte de lo que crees y más capaz de lo que imaginas.",
+                    "El único límite para tus logros es tu imaginación.",
+                    "No dejes que el miedo decida tu futuro.",
+                    "Cree en ti mismo y todo será posible.",
+                    "La vida es 10% lo que te sucede y 90% cómo reaccionas.",
+                    "Tu actitud determina tu dirección.",
+                    "Los obstáculos son esas cosas espantosas que ves cuando quitas los ojos de tu meta.",
+                    "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
+                    "No esperes oportunidades, créalas.",
+                    "La mejor venganza es un éxito masivo.",
+                    "Si puedes soñarlo, puedes lograrlo.",
+                    "La diferencia entre lo ordinario y lo extraordinario es ese pequeño extra.",
+                    "No cuentes los días, haz que los días cuenten.",
+                    "El momento perfecto nunca llegará, empieza ahora.",
+                    "Tu única limitación es la que estableces en tu mente.",
+                    "Cada logro comenzó con la decisión de intentarlo.",
+                    "La vida no se trata de esperar a que pase la tormenta, sino de aprender a bailar bajo la lluvia.",
+                    "El cambio duele, pero lleva a crecer.",
+                    "No te compares con otros, compite contigo mismo.",
+                    "La felicidad no es un destino, es una forma de viajar.",
+                    "Haz de cada día una obra maestra.",
+                    "El único modo de hacer un gran trabajo es amar lo que haces."
+                ],
+                jokes: [
+                    "¿Por qué los peces son tan inteligentes? ¡Porque nadan en escuelas!",
+                    "¿Qué le dice un techo a otro? Techo de menos.",
+                    "¿Por qué los pájaros vuelan hacia el sur? ¡Porque caminando tardarían mucho!",
+                    "¿Cuál es el colmo de un electricista? Tener mala corriente.",
+                    "¿Qué le dice una iguana a su hermana gemela? Somos iguanitas.",
+                    "¿Por qué las galletas fortune no cuentan chistes? Porque se les rompe el hielo.",
+                    "¿Qué hace una abeja en el gimnasio? ¡Zum-ba!",
+                    "¿Cuál es el animal más antiguo? La cebra, porque está en blanco y negro.",
+                    "¿Qué le dice un jaguar a otro jaguar? Jaguar you?",
+                    "¿Por qué los esqueletos no pelean entre ellos? Porque no tienen agallas.",
+                    "¿Qué hace una tuerca cuando se aburre? Da vueltas.",
+                    "¿Cuál es el café más peligroso? El ex-preso.",
+                    "¿Por qué los libros de matemáticas siempre están tristes? Porque tienen muchos problemas.",
+                    "¿Qué le dice un semáforo a otro? No me mires, me estoy cambiando.",
+                    "¿Cómo se despiden los químicos? Ácido un placer.",
+                    "¿Por qué Superman llevaba los calzoncillos por fuera? ¡Por fuera era Superman, por dentro era Clark Kent!",
+                    "¿Qué le dice un gusano a otro? Oye, voy a dar una vuelta a la manzana.",
+                    "¿Cuál es el baile favorito del pan? La baguette.",
+                    "¿Por qué las focas miran siempre hacia arriba? ¡Porque es donde están los focos!",
+                    "¿Qué hace un perro con un taladro? Taladrando.",
+                    "¿Cómo se llama el campeón de buceo japonés? Tokofondo.",
+                    "¿Qué le dice un huevo a una sartén? Me tienes frito.",
+                    "¿Por qué los fantasmas no mienten? Porque se transparentan.",
+                    "¿Qué hace una impresora en el gimnasio? Imprime músculo.",
+                    "¿Cuál es el vino más amable? El vin-dulce."
+                ],
+                luckyNumbers: [
+                    "3, 7, 21, 33, 42, 58",
+                    "8, 14, 23, 35, 47, 56",
+                    "5, 12, 19, 27, 39, 61",
+                    "2, 11, 24, 36, 45, 59",
+                    "9, 16, 28, 34, 48, 63",
+                    "4, 13, 22, 31, 44, 57",
+                    "6, 15, 26, 37, 49, 62",
+                    "1, 10, 25, 32, 43, 60",
+                    "7, 18, 29, 38, 51, 64",
+                    "5, 17, 30, 41, 52, 65",
+                    "8, 20, 33, 46, 53, 66",
+                    "3, 14, 27, 39, 50, 67",
+                    "9, 19, 35, 42, 55, 68",
+                    "2, 16, 28, 40, 54, 69",
+                    "6, 21, 34, 47, 56, 70",
+                    "4, 18, 31, 45, 57, 71",
+                    "7, 22, 36, 48, 58, 72",
+                    "1, 15, 29, 43, 59, 73",
+                    "5, 20, 37, 49, 60, 74",
+                    "8, 23, 38, 51, 61, 75",
+                    "3, 17, 32, 44, 62, 76",
+                    "9, 24, 39, 52, 63, 77",
+                    "6, 19, 33, 46, 64, 78",
+                    "2, 21, 35, 50, 65, 79",
+                    "4, 22, 40, 53, 66, 80"
+                ]
+            },
+            en: {
+                predictions: [
+                    "One of your dreams will come true very soon.",
+                    "You will be happy for the rest of your life.",
+                    "You will receive news that will change your destiny.",
+                    "You will find love in an unexpected place.",
+                    "An unexpected trip will bring you great joys.",
+                    "Your financial situation will improve significantly.",
+                    "You will meet someone who will change your perspective on life.",
+                    "You will succeed in an important project.",
+                    "You will receive recognition for your work.",
+                    "You will find something you lost a long time ago.",
+                    "You will have a chance encounter with an old friend.",
+                    "A secret wish will come true.",
+                    "Your health will improve remarkably.",
+                    "You will discover a talent you didn't know you had.",
+                    "A unique opportunity will present itself on your path.",
+                    "You will solve a problem that has worried you.",
+                    "Someone will give you a pleasant surprise.",
+                    "Your patience will be rewarded.",
+                    "You will find the answer you were looking for.",
+                    "You will have a moment of clarity that will guide your decisions.",
+                    "An influential person will notice your skills.",
+                    "Your perseverance will bear fruit sooner than expected.",
+                    "You will receive an offer you can't refuse.",
+                    "A positive change will come to your family life.",
+                    "Your efforts will be publicly recognized."
+                ],
+                advice: [
+                    "Have patience; the Great Wall wasn't built in a day.",
+                    "We can't direct the wind, but we can adjust the sails.",
+                    "Listen more than you speak.",
+                    "Learn from the past, live in the present, plan for the future.",
+                    "Don't fear making mistakes; fear not learning from them.",
+                    "The best way to predict the future is to create it.",
+                    "Invest in your knowledge; it will give you the best interest.",
+                    "Guard your words; once spoken, they can't be taken back.",
+                    "Sometimes silence is the best answer.",
+                    "Don't judge each day by the harvest you reap, but by the seeds you plant.",
+                    "Patience is bitter, but its fruit is sweet.",
+                    "He who grasps too much holds little.",
+                    "Don't put off until tomorrow what you can do today.",
+                    "Better safe than sorry.",
+                    "Who doesn't risk, doesn't win.",
+                    "Practice makes perfect.",
+                    "There are no shortcuts to any place worth going.",
+                    "Humility opens more doors than arrogance.",
+                    "Be thankful for what you have while pursuing what you want.",
+                    "Knowledge is the only treasure that increases when shared.",
+                    "Honesty is the first chapter in the book of wisdom.",
+                    "Take care of your health; it's your true wealth.",
+                    "Appreciate the small things; one day you'll see they were the big ones.",
+                    "Respect is earned, honesty is appreciated, trust is acquired.",
+                    "Even the longest journey begins with a single step."
+                ],
+                inspiration: [
+                    "Dare to discover new things.",
+                    "Failure is not defeat until you stop trying.",
+                    "Every day is a new opportunity to change your life.",
+                    "You are stronger than you think and more capable than you imagine.",
+                    "The only limit to your achievements is your imagination.",
+                    "Don't let fear decide your future.",
+                    "Believe in yourself and anything is possible.",
+                    "Life is 10% what happens to you and 90% how you react.",
+                    "Your attitude determines your direction.",
+                    "Obstacles are those frightful things you see when you take your eyes off your goal.",
+                    "Success is the sum of small efforts repeated day after day.",
+                    "Don't wait for opportunities; create them.",
+                    "The best revenge is massive success.",
+                    "If you can dream it, you can achieve it.",
+                    "The difference between ordinary and extraordinary is that little extra.",
+                    "Don't count the days; make the days count.",
+                    "The perfect moment will never come; start now.",
+                    "Your only limitation is the one you set in your mind.",
+                    "Every achievement began with the decision to try.",
+                    "Life isn't about waiting for the storm to pass, but learning to dance in the rain.",
+                    "Change hurts, but it leads to growth.",
+                    "Don't compare yourself to others; compete with yourself.",
+                    "Happiness is not a destination; it's a way of traveling.",
+                    "Make every day a masterpiece.",
+                    "The only way to do great work is to love what you do."
+                ],
+                jokes: [
+                    "Why are fish so smart? Because they swim in schools!",
+                    "What does one roof say to another? We're roofing it!",
+                    "Why do birds fly south? Because walking takes too long!",
+                    "What's an electrician's worst nightmare? Bad current.",
+                    "What does an iguana say to her twin sister? We're iguana-twins!",
+                    "Why don't fortune cookies tell jokes? Because it would crack them up!",
+                    "What does a bee do at the gym? Zum-ba!",
+                    "What's the oldest animal? The zebra, because it's in black and white.",
+                    "What does one jaguar say to another? Jaguar you?",
+                    "Why don't skeletons fight each other? They don't have the guts.",
+                    "What does a nut do when bored? It goes nuts!",
+                    "What's the most dangerous coffee? The ex-press-o.",
+                    "Why are math books always sad? They have too many problems.",
+                    "What does one traffic light say to another? Don't look; I'm changing!",
+                    "How do chemists say goodbye? 'Acid to meet you.'",
+                    "Why did Superman wear his underwear outside? Outside he was Superman, inside he was Clark Kent!",
+                    "What does one worm say to another? Hey, I'm going around the apple.",
+                    "What's bread's favorite dance? The baguette!",
+                    "Why do seals always look up? Because that's where the spotlights are!",
+                    "What does a dog do with a drill? It drills!",
+                    "What's the Japanese diving champion's name? Toco Fundo.",
+                    "What does an egg say to a pan? You have me fried!",
+                    "Why don't ghosts lie? Because you can see right through them.",
+                    "What does a printer do at the gym? It prints muscle.",
+                    "What's the kindest wine? The vin-dulce."
+                ],
+                luckyNumbers: [
+                    "3, 7, 21, 33, 42, 58",
+                    "8, 14, 23, 35, 47, 56",
+                    "5, 12, 19, 27, 39, 61",
+                    "2, 11, 24, 36, 45, 59",
+                    "9, 16, 28, 34, 48, 63",
+                    "4, 13, 22, 31, 44, 57",
+                    "6, 15, 26, 37, 49, 62",
+                    "1, 10, 25, 32, 43, 60",
+                    "7, 18, 29, 38, 51, 64",
+                    "5, 17, 30, 41, 52, 65",
+                    "8, 20, 33, 46, 53, 66",
+                    "3, 14, 27, 39, 50, 67",
+                    "9, 19, 35, 42, 55, 68",
+                    "2, 16, 28, 40, 54, 69",
+                    "6, 21, 34, 47, 56, 70",
+                    "4, 18, 31, 45, 57, 71",
+                    "7, 22, 36, 48, 58, 72",
+                    "1, 15, 29, 43, 59, 73",
+                    "5, 20, 37, 49, 60, 74",
+                    "8, 23, 38, 51, 61, 75",
+                    "3, 17, 32, 44, 62, 76",
+                    "9, 24, 39, 52, 63, 77",
+                    "6, 19, 33, 46, 64, 78",
+                    "2, 21, 35, 50, 65, 79",
+                    "4, 22, 40, 53, 66, 80"
+                ]
+            },
+            zh: {
+                predictions: [
+                    "你的一个梦想很快就会实现。",
+                    "你将一生幸福。",
+                    "你将收到改变命运的消息。",
+                    "你将在意想不到的地方找到爱情。",
+                    "一次意外的旅行将带给你极大的喜悦。",
+                    "你的经济状况将显著改善。",
+                    "你将遇到改变你人生观的人。",
+                    "你将在重要项目中取得成功。",
+                    "你将因工作获得认可。",
+                    "你将找回很久以前丢失的东西。",
+                    "你将偶遇一位老朋友。",
+                    "一个秘密愿望将实现。",
+                    "你的健康将显著改善。",
+                    "你将发现自己不知道的天赋。",
+                    "一个独特的机会将出现在你的道路上。",
+                    "你将解决一个让你担忧的问题。",
+                    "有人将给你一个惊喜。",
+                    "你的耐心将得到回报。",
+                    "你将找到你一直在寻找的答案。",
+                    "你将有一个清晰的时刻，指引你的决定。",
+                    "一位有影响力的人将注意到你的技能。",
+                    "你的坚持将比预期更快结出果实。",
+                    "你将收到一个无法拒绝的提议。",
+                    "一个积极的变化将来到你的家庭生活中。",
+                    "你的努力将得到公开认可。"
+                ],
+                advice: [
+                    "要有耐心，长城不是一天建成的。",
+                    "我们无法指挥风，但可以调整风帆。",
+                    "多听少说。",
+                    "从过去学习，活在现在，规划未来。",
+                    "不要害怕犯错，害怕不从中学习。",
+                    "预测未来的最好方法是创造它。",
+                    "投资你的知识，它将给你最好的回报。",
+                    "小心你的话语，一旦说出就无法收回。",
+                    "有时沉默是最好的回答。",
+                    "不要根据收获判断一天，而是根据你种下的种子。",
+                    "耐心是苦的，但果实是甜的。",
+                    "贪多嚼不烂。",
+                    "今天能做的不要拖到明天。",
+                    "防患于未然。",
+                    "不冒险，就没有收获。",
+                    "熟能生巧。",
+                    "通往值得去的地方没有捷径。",
+                    "谦虚打开更多大门。",
+                    "感激你拥有的，同时追求你想要的。",
+                    "知识是唯一分享时会增加的宝藏。",
+                    "诚实是智慧之书的第一个章节。",
+                    "照顾你的健康，它是真正的财富。",
+                    "欣赏小事，有一天你会发现它们是大事。",
+                    "尊重是赢得的，诚实是被欣赏的，信任是获得的。",
+                    "最长的旅程也从一步开始。"
+                ],
+                inspiration: [
+                    "勇敢发现新事物。",
+                    "失败不是失败，除非你停止尝试。",
+                    "每一天都是改变生活的机会。",
+                    "你比你想象的更坚强，更有能力。",
+                    "你成就的唯一限制是你的想象力。",
+                    "不要让恐惧决定你的未来。",
+                    "相信自己，一切皆有可能。",
+                    "生活10%是你经历的，90%是你如何反应。",
+                    "你的态度决定你的方向。",
+                    "障碍是你移开目标视线时看到的可怕事物。",
+                    "成功是日复一日小努力的累积。",
+                    "不要等待机会，创造它们。",
+                    "最好的复仇是巨大的成功。",
+                    "如果你能梦想，你就能实现。",
+                    "平凡与非凡的区别是那一点额外努力。",
+                    "不要数日子，让日子有意义。",
+                    "完美时刻永不会来，现在就开始。",
+                    "你唯一的限制是你脑海中设定的。",
+                    "每个成就都从尝试的决定开始。",
+                    "生活不是等待风暴过去，而是学会在雨中起舞。",
+                    "改变是痛苦的，但它带来成长。",
+                    "不要与他人比较，与自己竞争。",
+                    "幸福不是目的地，而是一种旅行方式。",
+                    "让每一天成为杰作。",
+                    "做好伟大工作的唯一方式是热爱你所做的事。"
+                ],
+                jokes: [
+                    "为什么鱼这么聪明？因为它们在学校游泳！",
+                    "一个屋顶对另一个屋顶说什么？少了一个屋顶。",
+                    "为什么鸟儿飞往南方？因为走路太慢了！",
+                    "电工的最大烦恼是什么？电流不好。",
+                    "鬣蜥对她的双胞胎姐妹说什么？我们是鬣蜥姐妹。",
+                    "为什么幸运饼干不讲笑话？因为会笑裂它们。",
+                    "蜜蜂在健身房做什么？嗡嗡舞！",
+                    "最古老的动物是什么？斑马，因为它是黑白的。",
+                    "一个美洲豹对另一个说什么？美洲豹你？",
+                    "为什么骷髅不打架？因为它们没有胆量。",
+                    "螺母无聊时做什么？转圈圈。",
+                    "最危险的咖啡是什么？前犯人咖啡。",
+                    "为什么数学书总是伤心？因为有太多问题。",
+                    "一个红绿灯对另一个说什么？别看，我在变色。",
+                    "化学家如何道别？酸性相遇。",
+                    "为什么超人穿内裤在外？外他是超人，内他是克拉克·肯特！",
+                    "一条虫对另一条说什么？嘿，我要去绕苹果一圈。",
+                    "面包最喜欢的舞是什么？法棍舞。",
+                    "为什么海豹总向上看？因为聚光灯在那儿！",
+                    "狗拿着钻头做什么？钻孔。",
+                    "日本跳水冠军叫什么？托科丰多。",
+                    "鸡蛋对平底锅说什么？你把我煎了。",
+                    "为什么鬼不撒谎？因为它们透明。",
+                    "打印机在健身房做什么？打印肌肉。",
+                    "最友好的酒是什么？甜酒。"
+                ],
+                luckyNumbers: [
+                    "3, 7, 21, 33, 42, 58",
+                    "8, 14, 23, 35, 47, 56",
+                    "5, 12, 19, 27, 39, 61",
+                    "2, 11, 24, 36, 45, 59",
+                    "9, 16, 28, 34, 48, 63",
+                    "4, 13, 22, 31, 44, 57",
+                    "6, 15, 26, 37, 49, 62",
+                    "1, 10, 25, 32, 43, 60",
+                    "7, 18, 29, 38, 51, 64",
+                    "5, 17, 30, 41, 52, 65",
+                    "8, 20, 33, 46, 53, 66",
+                    "3, 14, 27, 39, 50, 67",
+                    "9, 19, 35, 42, 55, 68",
+                    "2, 16, 28, 40, 54, 69",
+                    "6, 21, 34, 47, 56, 70",
+                    "4, 18, 31, 45, 57, 71",
+                    "7, 22, 36, 48, 58, 72",
+                    "1, 15, 29, 43, 59, 73",
+                    "5, 20, 37, 49, 60, 74",
+                    "8, 23, 38, 51, 61, 75",
+                    "3, 17, 32, 44, 62, 76",
+                    "9, 24, 39, 52, 63, 77",
+                    "6, 19, 33, 46, 64, 78",
+                    "2, 21, 35, 50, 65, 79",
+                    "4, 22, 40, 53, 66, 80"
+                ]
+            }
+        };
+
+        // Elementos del DOM
+        const fortuneCookie = document.getElementById('fortuneCookie');
+        const cookieIntact = document.getElementById('cookieIntact');
+        const cookieBroken = document.getElementById('cookieBroken');
+        const fortuneMessage = document.getElementById('fortuneMessage');
+        const fortuneText = document.getElementById('fortuneText');
+        const fortuneType = document.getElementById('fortuneType');
+        const luckyNumbers = document.getElementById('luckyNumbers');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Elementos para el dropdown
+        const langToggle = document.getElementById('langToggle');
+        const langMenu = document.getElementById('langMenu');
+
+        // Idioma actual
+        let currentLang = 'es';
+
+        // Función para obtener un mensaje aleatorio (ahora por idioma)
+        function getRandomFortune() {
+            const langMessages = fortuneMessages[currentLang];  // Solo del idioma actual
+            const categories = Object.keys(langMessages);
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            const messages = langMessages[randomCategory];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            return { category: randomCategory, message: randomMessage };
+        }
+
+        // Función para romper la galleta
+        function breakCookie() {
+            const fortune = getRandomFortune();
+            
+            // Guardar categoría para futuras actualizaciones de idioma
+            fortuneType.dataset.category = fortune.category;
+            fortuneType.textContent = translations[currentLang].category[fortune.category];
+            
+            if (fortune.category === 'luckyNumbers') {
+                const label = translations[currentLang].luckyNumbersLabel;
+                luckyNumbers.innerHTML = `<strong>${label}</strong><br>${fortune.message}`;
+                fortuneText.textContent = '';
+            } else {
+                luckyNumbers.textContent = "";
+                fortuneText.textContent = fortune.message;
+            }
+
+            // Animación de rotura
+            cookieIntact.style.opacity = '0';
+            cookieIntact.style.transform = 'rotateY(180deg)';
+            cookieBroken.style.opacity = '1';
+            cookieBroken.style.transform = 'rotateY(0deg)';
+            
+            setTimeout(() => {
+                fortuneMessage.classList.add('show');
+            }, 800);
+            
+            fortuneCookie.style.pointerEvents = 'none';
+        }
+
+        // Función para reiniciar
+        function resetCookie() {
+            cookieIntact.style.opacity = '1';
+            cookieIntact.style.transform = 'rotateY(0deg)';
+            cookieBroken.style.opacity = '0';
+            cookieBroken.style.transform = 'rotateY(180deg)';
+            fortuneMessage.classList.remove('show');
+            fortuneCookie.style.pointerEvents = 'auto';
+        }
+
+        // Función para cambiar idioma
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // Actualizar interfaz
+            document.getElementById('page-title').textContent = translations[lang].title;
+            document.getElementById('page-subtitle').textContent = translations[lang].subtitle;
+            document.getElementById('page-instructions').textContent = translations[lang].instructions;
+            resetBtn.innerHTML = '<i class="fas fa-redo-alt"></i> ' + translations[lang].resetBtn;
+            
+            // Si hay mensaje mostrado, actualizar su tipo
+            if (fortuneMessage.classList.contains('show') && fortuneType.dataset.category) {
+                fortuneType.textContent = translations[lang].category[fortuneType.dataset.category];
+                if (fortuneType.dataset.category === 'luckyNumbers') {
+                    const label = translations[lang].luckyNumbersLabel;
+                    const currentNumbers = luckyNumbers.textContent.replace(/.*?:\s*/, '').trim();
+                    luckyNumbers.innerHTML = `<strong>${label}</strong><br>${currentNumbers}`;
+                }
+            }
+
+            // Actualiza el toggle
+            const currentSpan = document.querySelector('.current-lang');
+            const langButtons = document.querySelectorAll('.lang-btn');
+            let activeBtn = null;
+            langButtons.forEach(btn => {
+                if (btn.dataset.lang === lang) {
+                    activeBtn = btn;
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            if (activeBtn) {
+                currentSpan.textContent = activeBtn.textContent;
+            }
+
+            // Guardar preferencia
+            localStorage.setItem('fortuneLang', lang);
+        }
+
+        // Toggle del menú de idiomas
+        langToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langMenu.classList.toggle('show');
+        });
+
+        // Cierra el menú al clicar fuera
+        document.addEventListener('click', () => {
+            langMenu.classList.remove('show');
+        });
+
+        // Inicializar idioma (con localStorage)
+        const savedLang = localStorage.getItem('fortuneLang');
+        if (savedLang && translations[savedLang]) {
+            setLanguage(savedLang);
+        } else {
+            setLanguage('es');
+        }
+
+        // Event listeners
+        fortuneCookie.addEventListener('click', breakCookie);
+        resetBtn.addEventListener('click', resetCookie);
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+        });
+    </script>
+</body>
+</html>
