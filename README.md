@@ -187,12 +187,6 @@ galleta-de-la-fortuna/
 
 ---
 
-## 📂 Archivo README.md
-
-Este archivo es el **README.md completo** que describe la aplicación en detalle, ideal para repositorios públicos (GitHub, GitLab, etc.) o documentación interna.
-
----
-
 ## 🚀 Cómo Usar / Implementar
 
 ### 1. **Como Página Web Independiente**
